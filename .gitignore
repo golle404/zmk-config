@@ -1,2 +1,5 @@
 
 .zmk/
+*.uf2
+CLAUDE.md
+.vscode/tasks.json
