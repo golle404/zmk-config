@@ -13,15 +13,29 @@
 #define BASE   0
 #define LOWER  1
 #define RAISE  2
-#define ADJUST 3
+#define ADJUST  3
+#define NUMBERS 4
 
 / {
 
-    conditional_layers {
-        compatible = "zmk,conditional-layers";
-        adjust_layer {
-            if-layers = <LOWER RAISE>;
-            then-layer = <ADJUST>;
+    behaviors {
+        num_lt: num_lt {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "balanced";
+            tapping-term-ms = <200>;
+            bindings = <&mo>, <&kp>;
+        };
+
+        rgb_enc_hue: rgb_enc_hue {
+            compatible = "zmk,behavior-sensor-rotate";
+            #sensor-binding-cells = <0>;
+            bindings = <&rgb_ug RGB_HUD>, <&rgb_ug RGB_HUI>;
+        };
+        rgb_enc_bri: rgb_enc_bri {
+            compatible = "zmk,behavior-sensor-rotate";
+            #sensor-binding-cells = <0>;
+            bindings = <&rgb_ug RGB_BRD>, <&rgb_ug RGB_BRI>;
         };
     };
 
@@ -49,16 +63,16 @@
 // │  ESC     │    1     │    2     │    3     │    4     │    5     │                    │    6     │    7     │    8     │    9     │    0     │  BSPC    │
 // │  TAB     │    Q     │    W     │    E     │    R     │    T     │                    │    Y     │    U     │    I     │    O     │    P     │  DEL     │
 // │  SHIFT   │    A     │    S     │    D     │    F     │    G     │                    │    H     │    J     │    K     │    L     │    ;     │    '     │
-// │  CTRL    │    Z     │  ALT/X   │  SHF/C   │  CTL/V   │    B     │  ENC   │   │  ENC  │    N     │  CTL/M   │  SHF/,   │  ALT/.   │    /     │    \     │
+// │  CTRL    │    Z     │  ALT/X   │  SHF/C   │  CTL/V   │    B     │  ENC   │   │  MUTE │    N     │  CTL/M   │  SHF/,   │  ALT/.   │    /     │    \     │
 // ╰──────────┴──────────┼──────────┼──────────┼──────────┼──────────┼────────╯   ╰───────┼──────────┼──────────┼──────────┼──────────┼──────────╯
-//                       │   ALT    │   GUI    │  -----   │  LOWER   │ SPACE  │   │ ENTER │  RAISE   │  -----   │ CTX MENU │ CAPSWORD │
+//                       │   ALT    │   GUI    │ DEL/NUM  │TAB/LOWER │ SPACE  │   │ ENTER │TAB/RAISE │ BSPC/NUM │ CTX MENU │ ADJUST   │
 //                       ╰──────────┴──────────┴──────────┴──────────┴────────╯   ╰───────┴──────────┴──────────┴──────────┴──────────╯
             bindings = <
 &kp ESC    &kp N1  &kp N2       &kp N3        &kp N4        &kp N5                          &kp N6    &kp N7        &kp N8          &kp N9        &kp N0    &kp BSPC
-&kp TAB    &kp Q   &kp W        &kp E         &kp R         &kp T                           &kp Y     &kp U         &kp I           &kp O         &kp P     &kp DEL
+&kp TAB             &kp Q   &kp W        &kp E         &kp R         &kp T                           &kp Y     &kp U         &kp I           &kp O         &kp P     &kp DEL
 &kp LSHFT  &kp A   &kp S        &kp D         &kp F         &kp G                           &kp H     &kp J         &kp K           &kp L         &kp SEMI  &kp SQT
-&kp LCTRL  &kp Z   &mt LALT X   &mt LSHFT C   &mt LCTRL V   &kp B   &none       &none       &kp N     &mt RCTRL M   &mt RSHFT COMMA &mt RALT DOT  &kp FSLH  &kp BSLH
-                   &kp LALT     &kp LGUI      &trans        &mo LOWER &kp SPACE              &kp RET   &mo RAISE     &trans          &kp K_CONTEXT_MENU  &caps_word
+&kp LCTRL  &kp Z   &mt LALT X   &mt LSHFT C   &mt LCTRL V   &kp B   &none       &kp C_MUTE  &kp N     &mt RCTRL M   &mt RSHFT COMMA &mt RALT DOT  &kp FSLH  &kp BSLH
+                   &kp LALT     &kp LGUI      &num_lt NUMBERS DEL &num_lt LOWER TAB &kp SPACE              &kp RET   &num_lt RAISE TAB &num_lt NUMBERS BSPC  &kp K_CONTEXT_MENU  &mo ADJUST
             >;
 
             sensor-bindings = <&inc_dec_kp PG_UP PG_DN &inc_dec_kp C_VOL_UP C_VOL_DN>;
@@ -88,16 +102,16 @@
         raise_layer {
             display-name = "raise";
 // ╭──────────┬──────────┬──────────┬──────────┬──────────┬──────────╮                    ╭──────────┬──────────┬──────────┬──────────┬──────────┬──────────╮
-// │          │  CTRL+`  │          │          │          │          │                    │  INSERT  │  HOME    │  PRTSCR  │  PG UP   │          │  VOL UP  │
-// │          │          │          │ CA+=     │          │          │                    │  DELETE  │  END     │    ↑     │  PG DN   │          │  VOL DN  │
+// │          │  CTRL+`  │          │          │          │          │                    │          │  HOME    │  PRTSCR  │  PG UP   │          │  VOL UP  │
+// │          │          │          │ CA+=     │          │          │                    │          │  END     │    ↑     │  PG DN   │          │  VOL DN  │
 // │          │          │  MC_KS   │          │          │          │                    │          │    ←     │    ↓     │    →     │          │  MUTE    │
 // │          │          │          │          │          │          │        │  │        │          │          │          │          │          │          │
 // ╰──────────┴──────────┼──────────┼──────────┼──────────┼──────────┼────────╯  ╰────────┼──────────┼──────────┼──────────┼──────────┼──────────╯
 //                       │  (trns)  │  (trns)  │  (trns)  │  (trns)  │ (trns) │  │ (trns) │  (trns)  │  (trns)  │  (trns)  │  (trns)  │
 //                       ╰──────────┴──────────┴──────────┴──────────┴────────╯  ╰────────┴──────────┴──────────┴──────────┴──────────╯
             bindings = <
-&none  &kp LC(GRAVE)  &none    &none              &none   &none                    &kp INS   &kp HOME  &kp PSCRN  &kp PG_UP  &none  &kp C_VOL_UP
-&none  &none          &none    &kp LC(LA(EQUAL))  &none   &none                    &kp DEL   &kp END   &kp UP     &kp PG_DN  &none  &kp C_VOL_DN
+&none  &kp LC(GRAVE)  &none    &none              &none   &none                    &none     &kp HOME  &kp PSCRN  &kp PG_UP  &none  &kp C_VOL_UP
+&none  &none          &none    &kp LC(LA(EQUAL))  &none   &none                    &none     &kp END   &kp UP     &kp PG_DN  &none  &kp C_VOL_DN
 &none  &none          &mc_ks   &none              &none   &none                    &none     &kp LEFT  &kp DOWN   &kp RIGHT  &none  &kp C_MUTE
 &none  &none          &none    &none              &none   &none   &none   &none    &none     &none     &none      &none      &none  &none
                       &trans   &trans             &trans  &trans  &trans            &trans    &trans    &trans     &trans     &trans
@@ -109,23 +123,45 @@
         adjust_layer {
             display-name = "adjust";
 // ╭──────────┬──────────┬──────────┬──────────┬──────────┬──────────╮                    ╭──────────┬──────────┬──────────┬──────────┬──────────┬──────────╮
-// │  BT CLR  │  BT 1    │  BT 2    │  BT 3    │  BT 4    │  BT 5    │                    │          │          │          │          │          │          │
-// │  EXT PWR │  RGB H-  │  RGB H+  │  RGB S-  │  RGB S+  │ RGB EFF  │                    │          │          │          │          │          │          │
-// │          │  RGB B-  │  RGB B+  │          │          │          │                    │          │          │          │          │          │          │
-// │          │          │          │          │          │          │RGB TOG │  │        │          │          │          │          │          │          │
+// │  BT CLR  │  BT 1    │  BT 2    │  BT 3    │  BT 4    │  BT 5    │                    │          │  KP /    │  KP *    │  KP -    │  KP +    │          │
+// │  EXT PWR │  RGB H-  │  RGB H+  │  RGB S-  │  RGB S+  │ RGB EFF  │                    │          │  KP 7    │  KP 8    │  KP 9    │          │          │
+// │          │  RGB B-  │  RGB B+  │          │          │          │                    │          │  KP 4    │  KP 5    │  KP 6    │          │          │
+// │          │          │          │          │          │          │RGB TOG │  │RGB EFF │          │  KP 1    │  KP 2    │  KP 3    │          │          │
 // ╰──────────┴──────────┼──────────┼──────────┼──────────┼──────────┼────────╯  ╰────────┼──────────┼──────────┼──────────┼──────────┼──────────╯
-//                       │          │          │          │          │        │  │        │          │          │          │          │
+//                       │          │          │          │          │        │  │        │          │  KP 0    │  KP .    │          │
+//                       ╰──────────┴──────────┴──────────┴──────────┴────────╯  ╰────────┴──────────┴──────────┴──────────┴──────────╯
+// Encoders: left = hue-/hue+   right = brightness-/brightness+
+            bindings = <
+&bt BT_CLR         &bt BT_SEL 0     &bt BT_SEL 1     &bt BT_SEL 2     &bt BT_SEL 3     &bt BT_SEL 4                              &none  &kp KP_SLASH  &kp KP_MULTIPLY  &kp KP_MINUS  &kp KP_PLUS  &none
+&ext_power EP_TOG  &rgb_ug RGB_HUD  &rgb_ug RGB_HUI  &rgb_ug RGB_SAD  &rgb_ug RGB_SAI  &rgb_ug RGB_EFF                           &none  &kp KP_N7     &kp KP_N8        &kp KP_N9     &none        &none
+&none              &rgb_ug RGB_BRD  &rgb_ug RGB_BRI  &none            &none            &none                                     &none  &kp KP_N4     &kp KP_N5        &kp KP_N6     &none        &none
+&none              &none            &none            &none            &none            &none            &rgb_ug RGB_TOG  &rgb_ug RGB_EFF  &none  &kp KP_N1  &kp KP_N2  &kp KP_N3  &none  &none
+                                    &none            &none            &none            &none            &none            &none    &none  &kp KP_N0  &kp KP_DOT  &none
+            >;
+
+            sensor-bindings = <&rgb_enc_hue &rgb_enc_bri>;
+        };
+
+        numbers_layer {
+            display-name = "numbers";
+// ╭──────────┬──────────┬──────────┬──────────┬──────────┬──────────╮                    ╭──────────┬──────────┬──────────┬──────────┬──────────┬──────────╮
+// │          │          │          │          │          │          │                    │          │          │          │          │          │          │
+// │          │    !     │    @     │    #     │    $     │    %     │                    │    ^     │    &     │    *     │    (     │    )     │          │
+// │          │    1     │    2     │    3     │    4     │    5     │                    │    6     │    7     │    8     │    9     │    0     │          │
+// │          │          │          │          │          │          │        │  │        │          │          │          │          │          │          │
+// ╰──────────┴──────────┼──────────┼──────────┼──────────┼──────────┼────────╯  ╰────────┼──────────┼──────────┼──────────┼──────────┼──────────╯
+//                       │  (trns)  │  (trns)  │  (trns)  │  (trns)  │ (trns) │  │ (trns) │  (trns)  │  (trns)  │  (trns)  │  (trns)  │
 //                       ╰──────────┴──────────┴──────────┴──────────┴────────╯  ╰────────┴──────────┴──────────┴──────────┴──────────╯
             bindings = <
-&bt BT_CLR         &bt BT_SEL 0     &bt BT_SEL 1     &bt BT_SEL 2     &bt BT_SEL 3     &bt BT_SEL 4                              &none  &none  &none  &none  &none  &none
-&ext_power EP_TOG  &rgb_ug RGB_HUD  &rgb_ug RGB_HUI  &rgb_ug RGB_SAD  &rgb_ug RGB_SAI  &rgb_ug RGB_EFF                           &none  &none  &none  &none  &none  &none
-&none              &rgb_ug RGB_BRD  &rgb_ug RGB_BRI  &none            &none            &none                                     &none  &none  &none  &none  &none  &none
-&none              &none            &none            &none            &none            &none            &rgb_ug RGB_TOG  &none    &none  &none  &none  &none  &none  &none
-                                    &none            &none            &none            &none            &none            &none    &none  &none  &none  &none
+&trans  &trans    &trans  &trans    &trans    &trans                           &trans     &trans    &trans    &trans    &trans    &trans
+&trans  &kp EXCL  &kp AT  &kp HASH  &kp DLLR  &kp PRCNT                        &kp CARET  &kp AMPS  &kp STAR  &kp LPAR  &kp RPAR  &trans
+&trans  &kp N1    &kp N2  &kp N3    &kp N4    &kp N5                           &kp N6     &kp N7    &kp N8    &kp N9    &kp N0    &trans
+&trans  &trans    &trans  &trans    &trans    &trans    &none       &none      &trans     &trans    &trans    &trans    &trans    &trans
+                  &trans  &trans    &trans    &trans    &trans                 &trans     &trans    &trans    &trans    &trans
             >;
 
             sensor-bindings = <&inc_dec_kp PG_UP PG_DN &inc_dec_kp C_VOL_UP C_VOL_DN>;
         };
 
-    };
+};
 };
