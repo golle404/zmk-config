@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "WebSearch",
+      "WebFetch(domain:zmk.dev)",
+      "WebFetch(domain:docs.splitkb.com)",
+      "WebFetch(domain:nicekeyboards.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:kriscables.com)"
+    ]
+  }
+}
