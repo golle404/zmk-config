@@ -24,7 +24,7 @@
             #binding-cells = <2>;
             flavor = "balanced";
             tapping-term-ms = <200>;
-            quick-tap-ms = <175>;
+            quick-tap-ms = <200>;
             bindings = <&mo>, <&kp>;
         };
 
@@ -32,7 +32,7 @@
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;
             flavor = "hold-preferred";
-            tapping-term-ms = <230>;
+            tapping-term-ms = <250>;
             bindings = <&kp>, <&kp>;
         };
 
