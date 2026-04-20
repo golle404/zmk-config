@@ -41,7 +41,7 @@
             #binding-cells = <2>;
             flavor = "balanced";
             tapping-term-ms = <200>;
-            bindings = <&tog>, <&kp>;
+            bindings = <&mo>, <&kp>;
         };
 
         rgb_enc_hue: rgb_enc_hue {
