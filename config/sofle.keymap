@@ -93,7 +93,7 @@
                    &kp LALT     &kp LGUI      &num_lt NUMBERS DEL &num_lt LOWER TAB &kp SPACE              &kp RET   &num_lt RAISE TAB &num_lt NUMBERS BSPC  &kp K_CONTEXT_MENU  &mo ADJUST
             >;
 
-            sensor-bindings = <&inc_dec_kp PG_UP PG_DN &inc_dec_kp C_VOL_UP C_VOL_DN>;
+            sensor-bindings = <&inc_dec_kp PG_UP PG_DN &inc_dec_kp C_VOL_DN C_VOL_UP>;
         };
 
         lower_layer {
